@@ -1,0 +1,160 @@
+import React from 'react';
+import { Sparkles, ArrowRight, ShieldCheck, WifiOff, Download, Smartphone, Monitor, CheckCircle2, FileText, Zap } from 'lucide-react';
+import heroShowcaseImg from '../../assets/images/hero_app_showcase_1789027952814.jpg';
+
+interface HeroSectionProps {
+  onLaunchWebApp: () => void;
+  onScrollToDownloads: () => void;
+}
+
+export const HeroSection: React.FC<HeroSectionProps> = ({
+  onLaunchWebApp,
+  onScrollToDownloads,
+}) => {
+  return (
+    <section className="relative pt-8 pb-16 sm:pt-16 sm:pb-24 overflow-hidden">
+      {/* Dynamic Background Glows */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-10 left-1/4 w-80 h-80 rounded-full bg-indigo-500/20 blur-3xl" />
+        <div className="absolute top-20 right-1/4 w-96 h-96 rounded-full bg-purple-500/20 blur-3xl" />
+        <div className="absolute top-40 left-1/2 -translate-x-1/2 w-96 h-60 rounded-full bg-cyan-500/15 blur-3xl" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center text-center space-y-6 max-w-4xl mx-auto">
+          {/* Top Pill Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-pink-500/15 border border-indigo-500/30 text-indigo-700 dark:text-indigo-300 shadow-sm text-xs font-semibold backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500 dark:text-amber-300 animate-pulse" />
+            <span>AI Study v2.4 Now Available</span>
+            <span className="w-1 h-1 rounded-full bg-indigo-400" />
+            <span className="font-mono text-[11px] text-slate-600 dark:text-slate-300">
+              Android APK & Windows EXE
+            </span>
+          </div>
+
+          {/* App Name & Main Headline */}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.15]">
+            Master Any Subject Faster with{' '}
+            <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
+              Private, Offline-First
+            </span>{' '}
+            AI Intelligence
+          </h1>
+
+          {/* Tagline / Subheading */}
+          <p className="text-base sm:text-lg lg:text-xl text-slate-600 dark:text-slate-300 max-w-2xl font-normal leading-relaxed">
+            Upload textbooks, lecture slides, or syllabi in seconds. AI Study transforms complex documents into adaptive practice questions, verified answers, and spaced repetition schedules—with military-grade AES-256 client-side encryption.
+          </p>
+
+          {/* Call to Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto pt-2">
+            {/* Primary "Open Web App" Button */}
+            <button
+              onClick={onLaunchWebApp}
+              className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-bold text-sm sm:text-base shadow-xl shadow-indigo-600/35 transition transform active:scale-98 flex items-center justify-center gap-2.5 cursor-pointer group"
+              id="hero-btn-open-web-app"
+            >
+              <Sparkles className="w-5 h-5 text-amber-300 group-hover:rotate-12 transition-transform" />
+              <span>Open Web App</span>
+              <ArrowRight className="w-4 h-4 ml-0.5 group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            {/* Secondary "Download Native App" Button */}
+            <button
+              onClick={onScrollToDownloads}
+              className="w-full sm:w-auto px-7 py-4 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-sm sm:text-base border border-slate-300 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 shadow-md transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Download className="w-4 h-4 text-indigo-500" />
+              <span>Download Native Apps</span>
+              <div className="flex items-center gap-1 ml-1 text-slate-400">
+                <Smartphone className="w-3.5 h-3.5" />
+                <Monitor className="w-3.5 h-3.5" />
+              </div>
+            </button>
+          </div>
+
+          {/* Trust Highlights Checklist */}
+          <div className="pt-4 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-slate-600 dark:text-slate-400 font-medium">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+              <span>AES-256 On-Device Vault</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <WifiOff className="w-4 h-4 text-amber-500 shrink-0" />
+              <span>100% Offline Capable</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <FileText className="w-4 h-4 text-indigo-500 shrink-0" />
+              <span>PDF, DOCX & Markdown</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Zap className="w-4 h-4 text-purple-500 shrink-0" />
+              <span>Instant AI Questions</span>
+            </span>
+          </div>
+        </div>
+
+        {/* Hero App Showcase Visual Mockup */}
+        <div className="mt-12 sm:mt-16 max-w-5xl mx-auto">
+          <div className="relative rounded-3xl p-2 sm:p-3 bg-gradient-to-b from-indigo-500/20 via-purple-500/10 to-transparent border border-slate-200/80 dark:border-slate-800/80 shadow-2xl">
+            {/* Window header simulation */}
+            <div className="bg-slate-900 rounded-t-2xl px-4 py-3 flex items-center justify-between border-b border-slate-800 text-xs text-slate-400">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-rose-500/80" />
+                <div className="w-3 h-3 rounded-full bg-amber-500/80" />
+                <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                <span className="ml-2 font-mono text-[11px] text-slate-300 hidden sm:inline">
+                  ai-study.app — Verified Practice Questions & Study Calendar
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-[10px] font-semibold border border-emerald-500/30 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  ONLINE / OFFLINE HYBRID
+                </span>
+              </div>
+            </div>
+
+            {/* Showcase Image with interactive floating cards */}
+            <div className="relative rounded-b-2xl overflow-hidden bg-slate-950 aspect-[16/9] sm:aspect-[16/8]">
+              <img
+                src={heroShowcaseImg}
+                alt="AI Study App Interface Showcase"
+                className="w-full h-full object-cover object-top"
+                loading="eager"
+              />
+
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/20 pointer-events-none" />
+
+              {/* Floating interactive badge bottom left */}
+              <div className="absolute bottom-4 left-4 right-4 sm:right-auto sm:max-w-md p-3.5 rounded-2xl bg-slate-900/95 backdrop-blur-xl border border-indigo-500/30 shadow-xl text-left text-xs">
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">
+                    ACTIVE QUESTION GENERATOR
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono">Exam Prep Mode</span>
+                </div>
+                <p className="font-semibold text-white text-xs sm:text-sm">
+                  "Generates Multiple Choice, Short Answer, True/False & Socratic Inquiries directly from your course files."
+                </p>
+                <div className="mt-2 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-indigo-300">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                    Verified Citation & Reasoning Included
+                  </span>
+                  <button
+                    onClick={onLaunchWebApp}
+                    className="font-bold underline hover:text-white transition cursor-pointer"
+                  >
+                    Try Live →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};

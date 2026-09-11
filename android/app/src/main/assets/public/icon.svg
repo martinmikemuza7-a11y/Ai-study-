@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#090d16" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#312e81" />
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)" />
+  
+  <!-- Outer Glow Ring -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="url(#accentGrad)" stroke-width="4" opacity="0.4" stroke-dasharray="16 12" />
+
+  <!-- Shield Shape (Security / Encrypted Academic Data) -->
+  <path d="M256 80 L380 135 C380 255 330 350 256 420 C182 350 132 255 132 135 Z" fill="url(#shieldGrad)" stroke="#818cf8" stroke-width="6" />
+
+  <!-- Open Book & AI Nodes -->
+  <!-- Left Page -->
+  <path d="M256 220 C220 200 180 205 160 215 C160 270 160 310 160 310 C180 300 220 295 256 315 Z" fill="#ffffff" fill-opacity="0.9" />
+  <!-- Right Page -->
+  <path d="M256 220 C292 200 332 205 352 215 C352 270 352 310 352 310 C332 300 292 295 256 315 Z" fill="#e0e7ff" />
+  <!-- Spine -->
+  <line x1="256" y1="210" x2="256" y2="320" stroke="#4338ca" stroke-width="4" stroke-linecap="round" />
+
+  <!-- Lock Clasp / Neural Core -->
+  <circle cx="256" cy="165" r="18" fill="#38bdf8" />
+  <circle cx="256" cy="165" r="8" fill="#0f172a" />
+  <rect x="252" y="165" width="8" height="14" rx="2" fill="#0f172a" />
+
+  <!-- Sparkle dots -->
+  <circle cx="190" cy="140" r="5" fill="#a5b4fc" opacity="0.8" />
+  <circle cx="322" cy="140" r="5" fill="#a5b4fc" opacity="0.8" />
+  <circle cx="256" cy="370" r="6" fill="#38bdf8" />
+</svg>

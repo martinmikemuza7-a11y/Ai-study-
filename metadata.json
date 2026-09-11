@@ -1,0 +1,7 @@
+{
+  "name": "AI Study - Encrypted Offline Learning Platform",
+  "description": "Offline-capable academic study platform with native Windows 7/8/10/11 and Android packages, course dashboard, calendar scheduling, and AI-powered multiple choice, short answer, true/false, and explain questions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
