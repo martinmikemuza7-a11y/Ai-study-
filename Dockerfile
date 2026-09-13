@@ -15,6 +15,7 @@ RUN npm run build
 
 # Cloud Run production environment
 ENV NODE_ENV=production
+ENV PORT=3000
 
 # Container port (must match Cloud Run container port 3000)
 EXPOSE 3000

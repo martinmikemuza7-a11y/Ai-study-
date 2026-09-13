@@ -1,0 +1,14 @@
+.gcloudignore
+.git
+.gitignore
+.dockerignore
+node_modules/
+dist/
+dist-electron/
+android/
+.capacitor/
+.env
+.env.local
+.env.*.local
+*.log
+.tools/
