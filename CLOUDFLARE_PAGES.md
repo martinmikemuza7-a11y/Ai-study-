@@ -58,6 +58,30 @@ The repository includes pre-configured files specifically tuned for Cloudflare P
 
 ---
 
+## 🛠️ Troubleshooting Common Build Errors
+
+### 1. "npm error `npm ci` can only install packages when your package.json and package-lock.json are in sync" / "Missing: ... from lock file"
+**Root Cause**: Cloudflare Pages runs `npm clean-install` (`npm ci`) by default. If `package.json` was updated without syncing `package-lock.json`, or if an unsupported Node version (e.g. Node 24) is auto-detected, npm rejects the installation.
+
+**Fix Applied in Repository**:
+1. Synchronized `package-lock.json` directly with `package.json`.
+2. Created `.nvmrc` and `.node-version` pinning Node.js to `20` (Node 20 Active LTS).
+3. Created `.npmrc` with `legacy-peer-deps=true`.
+
+**Cloudflare Pages Setting (Guaranteed Fail-Safe)**:
+If you want to prevent `npm ci` lockfile mismatch errors permanently:
+1. In Cloudflare Pages Dashboard, go to **Settings** > **Build & deployments** > **Environment variables**.
+2. Add variable:
+   - `SKIP_DEPENDENCY_INSTALL` = `true`
+   - `NODE_VERSION` = `20`
+3. In **Build configurations**, change **Build command** to:
+   ```bash
+   npm install && npm run build:pages
+   ```
+This instructs Cloudflare Pages to use `npm install` rather than strict `npm ci`, ensuring graceful package resolution across every platform.
+
+---
+
 ## 🔐 Environment Variables
 
 | Variable | Required | Description |
