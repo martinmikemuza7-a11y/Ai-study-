@@ -60,6 +60,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onLaunchWebApp }) => {
         <HeroSection
           onLaunchWebApp={onLaunchWebApp}
           onScrollToDownloads={() => handleScrollToSection('downloads')}
+          config={downloadConfig}
         />
 
         {/* Key Features and Benefits */}

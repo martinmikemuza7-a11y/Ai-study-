@@ -1,0 +1,25 @@
+# Cloudflare Pages Redirects & SPA Fallback
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# 1. Direct App Download Shortlinks
+/apk                            /downloads/study-buddy-ai.apk           302
+/android                        /downloads/study-buddy-ai.apk           302
+/pc                             /downloads/study-buddy-ai-setup.exe     302
+/windows                        /downloads/study-buddy-ai-setup.exe     302
+/windows-portable               /downloads/study-buddy-ai-windows.zip   302
+/pc-portable                    /downloads/study-buddy-ai-windows.zip   302
+/source                         /downloads/study-buddy-ai-source.zip    302
+
+# 2. Static CDN Download Handlers for /api/download/*
+/api/download/android           /downloads/study-buddy-ai.apk           302
+/api/download/apk               /downloads/study-buddy-ai.apk           302
+/api/download/pc                /downloads/study-buddy-ai-setup.exe     302
+/api/download/windows           /downloads/study-buddy-ai-setup.exe     302
+/api/download/exe               /downloads/study-buddy-ai-setup.exe     302
+/api/download/windows-portable  /downloads/study-buddy-ai-windows.zip   302
+/api/download/pc-portable       /downloads/study-buddy-ai-windows.zip   302
+/api/download/zip               /downloads/study-buddy-ai-windows.zip   302
+/api/download/source            /downloads/study-buddy-ai-source.zip    302
+
+# 3. SPA Routing Fallback (must be last)
+/*                              /index.html                             200

@@ -452,9 +452,16 @@ def main():
     shutil.copy2(windows_installer, dest_exe)
     shutil.copy2(windows_portable, dest_zip)
 
-    # Mirror to dist/downloads/
-    for f in [dest_apk, dest_exe, dest_zip]:
-        shutil.copy2(f, DIST_DOWNLOADS / f.name)
+    # Also provide standard aliases for direct downloads
+    shutil.copy2(dest_apk, PUBLIC_DOWNLOADS / "study-buddy-ai.apk")
+    shutil.copy2(dest_exe, PUBLIC_DOWNLOADS / "study-buddy-ai-setup.exe")
+    shutil.copy2(dest_exe, PUBLIC_DOWNLOADS / "study-buddy-ai.exe")
+    shutil.copy2(dest_zip, PUBLIC_DOWNLOADS / "study-buddy-ai-windows.zip")
+
+    # Mirror all to dist/downloads/
+    for f in PUBLIC_DOWNLOADS.glob("*"):
+        if f.is_file():
+            shutil.copy2(f, DIST_DOWNLOADS / f.name)
 
     # Calculate sizes and hashes
     apk_hash = calculate_sha256(dest_apk)

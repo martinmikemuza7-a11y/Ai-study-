@@ -1,16 +1,29 @@
 import React from 'react';
 import { Sparkles, ArrowRight, ShieldCheck, WifiOff, Download, Smartphone, Monitor, CheckCircle2, FileText, Zap } from 'lucide-react';
 import heroShowcaseImg from '../../assets/images/hero_app_showcase_1789027952814.jpg';
+import { DownloadAppConfig } from '../../config/downloadConfig';
 
 interface HeroSectionProps {
   onLaunchWebApp: () => void;
   onScrollToDownloads: () => void;
+  config?: DownloadAppConfig;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   onLaunchWebApp,
   onScrollToDownloads,
+  config,
 }) => {
+  const androidUrl =
+    config?.androidApk?.url && config.androidApk.url.trim().length > 0
+      ? config.androidApk.url.trim()
+      : '/downloads/study-buddy-ai.apk';
+
+  const windowsUrl =
+    config?.windowsExe?.url && config.windowsExe.url.trim().length > 0
+      ? config.windowsExe.url.trim()
+      : '/downloads/study-buddy-ai-setup.exe';
+
   return (
     <section className="relative pt-8 pb-16 sm:pt-16 sm:pb-24 overflow-hidden">
       {/* Dynamic Background Glows */}
@@ -46,30 +59,67 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             Upload textbooks, lecture slides, or syllabi in seconds. AI Study transforms complex documents into adaptive practice questions, verified answers, and spaced repetition schedules—with military-grade AES-256 client-side encryption.
           </p>
 
-          {/* Call to Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto pt-2">
-            {/* Primary "Open Web App" Button */}
+          {/* Call to Action Buttons: Exactly Three Clear Primary Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto pt-2">
+            {/* 1. Use Online */}
             <button
               onClick={onLaunchWebApp}
-              className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-bold text-sm sm:text-base shadow-xl shadow-indigo-600/35 transition transform active:scale-98 flex items-center justify-center gap-2.5 cursor-pointer group"
-              id="hero-btn-open-web-app"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-indigo-600/30 transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer group"
+              id="hero-btn-use-online"
             >
-              <Sparkles className="w-5 h-5 text-amber-300 group-hover:rotate-12 transition-transform" />
-              <span>Open Web App</span>
+              <Sparkles className="w-4 h-4 text-amber-300 group-hover:rotate-12 transition-transform" />
+              <span>Use Online</span>
               <ArrowRight className="w-4 h-4 ml-0.5 group-hover:translate-x-1 transition-transform" />
             </button>
 
-            {/* Secondary "Download Native App" Button */}
-            <button
-              onClick={onScrollToDownloads}
-              className="w-full sm:w-auto px-7 py-4 rounded-2xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-sm sm:text-base border border-slate-300 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 shadow-md transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+            {/* 2. Download Android */}
+            <a
+              href={androidUrl}
+              download="study-buddy-ai.apk"
+              target={androidUrl.startsWith('http') ? '_blank' : undefined}
+              rel={androidUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-emerald-600/30 transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+              id="hero-btn-download-android"
+              title="Download Android APK package directly (1.6 MB)"
             >
-              <Download className="w-4 h-4 text-indigo-500" />
-              <span>Download Native Apps</span>
-              <div className="flex items-center gap-1 ml-1 text-slate-400">
-                <Smartphone className="w-3.5 h-3.5" />
-                <Monitor className="w-3.5 h-3.5" />
-              </div>
+              <Smartphone className="w-4 h-4" />
+              <span>Download Android</span>
+              <Download className="w-3.5 h-3.5 opacity-80" />
+            </a>
+
+            {/* 3. Download Windows */}
+            <a
+              href={windowsUrl}
+              download="study-buddy-ai-setup.exe"
+              target={windowsUrl.startsWith('http') ? '_blank' : undefined}
+              rel={windowsUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white font-bold text-sm sm:text-base shadow-lg shadow-sky-600/30 transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer"
+              id="hero-btn-download-windows"
+              title="Download PC Windows Desktop Installer (.EXE)"
+            >
+              <Monitor className="w-4 h-4" />
+              <span>Download Windows</span>
+              <Download className="w-3.5 h-3.5 opacity-80" />
+            </a>
+          </div>
+
+          {/* Sub-note for portable edition & verification hashes */}
+          <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <span>Also available:</span>
+            <a
+              href="/downloads/study-buddy-ai-windows.zip"
+              download="study-buddy-ai-windows.zip"
+              className="underline hover:text-sky-600 dark:hover:text-sky-400"
+            >
+              Portable Windows (.ZIP)
+            </a>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={onScrollToDownloads}
+              className="underline hover:text-indigo-600 dark:hover:text-indigo-400 cursor-pointer"
+            >
+              View SHA-256 release checksums
             </button>
           </div>
 

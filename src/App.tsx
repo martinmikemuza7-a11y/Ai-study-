@@ -30,6 +30,8 @@ import { StudyTabView } from './components/StudyTabView';
 import { EncryptedVaultView } from './components/EncryptedVaultView';
 import { LandingPage } from './components/landing/LandingPage';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
+import { useSyncStatus } from './hooks/useSyncStatus';
+import { enqueueMutation } from './lib/syncEngine';
 import { ShieldCheck, WifiOff, RefreshCw } from 'lucide-react';
 
 const DEFAULT_PASSPHRASE = 'academic-vault-2026';
@@ -37,6 +39,7 @@ const SALT_STORAGE_KEY = 'aistudy_vault_salt_hex';
 
 export default function App() {
   const isOnline = useOnlineStatus();
+  const { status: syncStatus } = useSyncStatus();
   const [courses, setCourses] = useState<Course[]>([]);
   const [currentCourse, setCurrentCourse] = useState<Course | null>(null);
   const [documents, setDocuments] = useState<CourseDocument[]>([]);
@@ -192,12 +195,14 @@ export default function App() {
 
   const handleAddCourse = async (newCourse: Course) => {
     await putToStore('courses', newCourse);
+    await enqueueMutation('course', 'create', newCourse.id, newCourse);
     setCourses((prev) => [...prev, newCourse]);
     setCurrentCourse(newCourse);
   };
 
   const handleUpdateCourse = async (updatedCourse: Course) => {
     await putToStore('courses', updatedCourse);
+    await enqueueMutation('course', 'update', updatedCourse.id, updatedCourse);
     setCourses((prev) => prev.map((c) => (c.id === updatedCourse.id ? updatedCourse : c)));
     if (currentCourse?.id === updatedCourse.id) {
       setCurrentCourse(updatedCourse);
@@ -206,18 +211,21 @@ export default function App() {
 
   const handleDeleteCourse = async (courseId: string) => {
     await deleteFromStore('courses', courseId);
+    await enqueueMutation('course', 'delete', courseId, { id: courseId });
     setCourses((prev) => prev.filter((c) => c.id !== courseId));
     if (currentCourse?.id === courseId) {
       setCurrentCourse(null);
     }
   };
 
-  const handleDocumentAdded = (newDoc: CourseDocument) => {
+  const handleDocumentAdded = async (newDoc: CourseDocument) => {
+    await enqueueMutation('document', 'create', newDoc.id, newDoc);
     setDocuments((prev) => [...prev, newDoc]);
   };
 
   const handleDeleteDocument = async (docId: string) => {
     await deleteFromStore('course_documents', docId);
+    await enqueueMutation('document', 'delete', docId, { id: docId });
     setDocuments((prev) => prev.filter((d) => d.id !== docId));
   };
 
@@ -258,11 +266,17 @@ export default function App() {
         <div className="absolute -bottom-32 right-1/4 w-96 h-96 rounded-full bg-gradient-to-tl from-emerald-500/15 via-teal-500/15 to-amber-500/10 blur-3xl opacity-60 dark:opacity-25" />
       </div>
 
-      {/* Offline Status Bar Notice (If network drops) */}
+      {/* Offline & Cloud Sync Status Bar Notice */}
       {!isOnline && (
         <div className="bg-amber-50 dark:bg-amber-950/90 border-b border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 px-4 py-1.5 text-xs text-center flex items-center justify-center gap-2 font-medium">
           <WifiOff className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400 animate-pulse" />
-          <span>Offline Mode Active: Local questions & study engine running 100% offline.</span>
+          <span>Offline Study Mode: Course notes, flashcards & local RAG are accessible offline. Cloud AI synthesis will resume when online.</span>
+        </div>
+      )}
+      {isOnline && syncStatus === 'syncing' && (
+        <div className="bg-indigo-50 dark:bg-indigo-950/90 border-b border-indigo-200 dark:border-indigo-800 text-indigo-800 dark:text-indigo-200 px-4 py-1.5 text-xs text-center flex items-center justify-center gap-2 font-medium">
+          <RefreshCw className="w-3.5 h-3.5 text-indigo-500 animate-spin" />
+          <span>Syncing offline study progress with cloud...</span>
         </div>
       )}
 

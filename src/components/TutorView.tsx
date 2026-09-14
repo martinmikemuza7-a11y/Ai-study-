@@ -279,9 +279,10 @@ What topic would you like to explore today?`,
                 ? 'bg-indigo-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200 disabled:opacity-40'
             }`}
+            title={isOnline ? 'Online: Cloud Gemini LLM with RAG grounding' : 'Requires internet connection'}
           >
             <Globe className="w-3 h-3" />
-            <span className="hidden sm:inline">Gemini Cloud</span>
+            <span className="hidden sm:inline">Online Gemini</span>
           </button>
           <button
             onClick={() => setPreferOfflineAI(true)}
@@ -290,9 +291,10 @@ What topic would you like to explore today?`,
                 ? 'bg-amber-600 text-white shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
+            title="Offline Study: Grounded local document retrieval from IndexedDB cache"
           >
             <Cpu className="w-3 h-3" />
-            <span>Local AI</span>
+            <span>Offline Vault</span>
           </button>
         </div>
       </div>

@@ -1,0 +1,29 @@
+{
+  "appName": "AI Study",
+  "version": "2.4.0",
+  "releaseDate": "September 2026",
+  "androidApk": {
+    "fileName": "AI-Study-v2.4.0.apk",
+    "url": "/api/download/android",
+    "directFileUrl": "/downloads/AI-Study-v2.4.0.apk",
+    "size": "1.6 MB",
+    "sha256": "014a685541ff392cbb8adefaf4f8907085a0760a0d085938c03d16e900ed509d",
+    "minRequirement": "Android 8.0+ (Oreo or later)"
+  },
+  "windowsExe": {
+    "fileName": "AI-Study-Setup-2.4.0.exe",
+    "url": "/api/download/windows",
+    "directFileUrl": "/downloads/AI-Study-Setup-2.4.0.exe",
+    "size": "215 KB",
+    "sha256": "31f3649320464add308033c123bedab9b7c990b451fd57703f758d3e79561cbf",
+    "minRequirement": "Windows 10 / 11 (64-bit & 32-bit)"
+  },
+  "windowsPortable": {
+    "fileName": "AI-Study-Windows-Portable.zip",
+    "url": "/api/download/windows-portable",
+    "directFileUrl": "/downloads/AI-Study-Windows-Portable.zip",
+    "size": "75 KB",
+    "sha256": "dc4f51f7de8cfb9cf3d305343b1b247875a1c8596c92601de7224b4bb45e4b72",
+    "minRequirement": "Windows 10 / 11 (No install required)"
+  }
+}

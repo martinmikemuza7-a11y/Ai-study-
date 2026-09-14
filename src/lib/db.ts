@@ -11,6 +11,8 @@ import {
   SecurityAuditLog,
   AcademicGradeRecord,
   QuizQuestion,
+  SyncQueueItem,
+  AppSettingItem,
 } from '../types';
 import {
   deriveKeyFromPassphrase,
@@ -19,13 +21,15 @@ import {
 } from './crypto';
 
 const DB_NAME = 'AIStudyEncryptedDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export interface DBStores {
   courses: Course;
   course_documents: CourseDocument;
   encrypted_records: EncryptedRecordEnvelope;
   audit_logs: SecurityAuditLog;
+  sync_queue: SyncQueueItem;
+  app_settings: AppSettingItem;
 }
 
 let dbInstance: IDBDatabase | null = null;
@@ -72,6 +76,19 @@ export async function getDB(): Promise<IDBDatabase> {
         const auditStore = db.createObjectStore('audit_logs', { keyPath: 'id' });
         auditStore.createIndex('timestamp', 'timestamp', { unique: false });
         auditStore.createIndex('eventType', 'eventType', { unique: false });
+      }
+
+      // 5. Sync Queue Store (Offline to Online auto-sync)
+      if (!db.objectStoreNames.contains('sync_queue')) {
+        const syncStore = db.createObjectStore('sync_queue', { keyPath: 'id' });
+        syncStore.createIndex('status', 'status', { unique: false });
+        syncStore.createIndex('timestamp', 'timestamp', { unique: false });
+        syncStore.createIndex('entityType', 'entityType', { unique: false });
+      }
+
+      // 6. App Settings Store
+      if (!db.objectStoreNames.contains('app_settings')) {
+        db.createObjectStore('app_settings', { keyPath: 'key' });
       }
     };
   });

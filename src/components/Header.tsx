@@ -18,11 +18,15 @@ import {
   FileText,
   Sun,
   Moon,
+  Smartphone,
+  Monitor,
+  RefreshCw,
 } from 'lucide-react';
 import { Course, CourseDocument, VaultState } from '../types';
 import { useOnlineStatus } from '../hooks/useOnlineStatus';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 import { useTheme } from '../context/ThemeContext';
+import { useSyncStatus } from '../hooks/useSyncStatus';
 
 interface HeaderProps {
   currentCourse: Course | null;
@@ -55,9 +59,11 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const isOnline = useOnlineStatus();
   const { theme, toggleTheme } = useTheme();
+  const { status: syncStatus, pendingCount, triggerSync } = useSyncStatus();
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
   const [showIOSModal, setShowIOSModal] = useState(false);
   const [courseDropdownOpen, setCourseDropdownOpen] = useState(false);
+  const [downloadDropdownOpen, setDownloadDropdownOpen] = useState(false);
 
   const currentCourseDocsCount = currentCourse
     ? documents.filter((d) => d.courseId === currentCourse.id).length
@@ -262,6 +268,103 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right Controls: Theme Toggle, Connectivity, PWA Install, Vault Status */}
         <div className="flex items-center gap-2">
+          {/* Download Apps (PC & Android) Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setDownloadDropdownOpen(!downloadDropdownOpen)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition active:scale-95 cursor-pointer shadow-2xs"
+              title="Download Android APK, PC Windows App or Project Source"
+              id="header-btn-download-menu"
+            >
+              <Download className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span className="hidden sm:inline">Get App</span>
+              <span className="sm:hidden">Apps</span>
+              <ChevronDown className={`w-3 h-3 text-indigo-500 transition-transform ${downloadDropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {downloadDropdownOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setDownloadDropdownOpen(false)}
+                />
+                <div className="absolute right-0 mt-2 w-64 rounded-xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 z-50 p-2 space-y-1 text-xs animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="px-2 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700/60 pb-1.5 mb-1">
+                    Download Native Apps
+                  </div>
+
+                  {/* Android APK */}
+                  <a
+                    href="/downloads/study-buddy-ai.apk"
+                    download="study-buddy-ai.apk"
+                    onClick={() => setDownloadDropdownOpen(false)}
+                    className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-300 transition group"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Smartphone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      <div className="text-left">
+                        <div className="font-bold">Android APK</div>
+                        <div className="text-[10px] text-slate-400">Direct install (1.6 MB)</div>
+                      </div>
+                    </div>
+                    <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400" />
+                  </a>
+
+                  {/* Windows / PC App */}
+                  <a
+                    href="/downloads/study-buddy-ai-setup.exe"
+                    download="study-buddy-ai-setup.exe"
+                    onClick={() => setDownloadDropdownOpen(false)}
+                    className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-sky-50 dark:hover:bg-sky-950/40 text-slate-700 dark:text-slate-200 hover:text-sky-700 dark:hover:text-sky-300 transition group"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Monitor className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                      <div className="text-left">
+                        <div className="font-bold">PC Windows (.EXE)</div>
+                        <div className="text-[10px] text-slate-400">Desktop installer (215 KB)</div>
+                      </div>
+                    </div>
+                    <Download className="w-3.5 h-3.5 text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400" />
+                  </a>
+
+                  {/* Windows / PC Portable */}
+                  <a
+                    href="/downloads/study-buddy-ai-windows.zip"
+                    download="study-buddy-ai-windows.zip"
+                    onClick={() => setDownloadDropdownOpen(false)}
+                    className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/60 text-slate-700 dark:text-slate-200 transition group"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Monitor className="w-4 h-4 text-slate-500" />
+                      <div className="text-left">
+                        <div className="font-medium">PC Portable (.ZIP)</div>
+                        <div className="text-[10px] text-slate-400">Zero-install archive (75 KB)</div>
+                      </div>
+                    </div>
+                    <Download className="w-3.5 h-3.5 text-slate-400" />
+                  </a>
+
+                  {/* Project Source */}
+                  <a
+                    href="/downloads/study-buddy-ai-source.zip"
+                    download="study-buddy-ai-source.zip"
+                    onClick={() => setDownloadDropdownOpen(false)}
+                    className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-950/40 text-slate-700 dark:text-slate-200 transition group border-t border-slate-100 dark:border-slate-700/60 mt-1 pt-1.5"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Download className="w-4 h-4 text-indigo-500" />
+                      <div className="text-left">
+                        <div className="font-medium">Complete Source (.ZIP)</div>
+                        <div className="text-[10px] text-slate-400">Full project repository</div>
+                      </div>
+                    </div>
+                    <Download className="w-3.5 h-3.5 text-slate-400" />
+                  </a>
+                </div>
+              </>
+            )}
+          </div>
+
           {/* Back to Landing Page & Native Downloads */}
           {onNavigateToLanding && (
             <button
@@ -269,9 +372,8 @@ export const Header: React.FC<HeaderProps> = ({
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500 bg-slate-50 dark:bg-slate-800 hover:bg-indigo-50/50 dark:hover:bg-slate-750 transition active:scale-95 cursor-pointer shadow-2xs"
               title="View Landing Page, APK & Windows EXE downloads"
             >
-              <Download className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-              <span className="hidden md:inline">Landing & Downloads</span>
-              <span className="md:hidden">Apps</span>
+              <span className="hidden md:inline">Landing Page</span>
+              <span className="md:hidden">Landing</span>
             </button>
           )}
 
@@ -296,7 +398,11 @@ export const Header: React.FC<HeaderProps> = ({
                 ? 'bg-emerald-500/10 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 shadow-emerald-500/10'
                 : 'bg-amber-500/10 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border-amber-500/30 shadow-amber-500/10'
             }`}
-            title={isOnline ? 'Online: Hybrid Gemini 3.8 Flash & Local RAG active' : 'Offline: Local RAG & Socratic AI active from IndexedDB cache'}
+            title={
+              isOnline
+                ? 'Online: Cloud Gemini LLM & real-time sync connected'
+                : 'Offline Mode: All study materials & cached document RAG available locally. Cloud AI synthesis paused.'
+            }
           >
             {isOnline ? (
               <>
@@ -311,10 +417,31 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="relative flex h-2 w-2">
                   <span className="animate-pulse relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                 </span>
-                <span className="hidden md:inline">Offline Mode</span>
+                <span className="hidden md:inline">Offline Study</span>
               </>
             )}
           </div>
+
+          {/* Sync Queue Indicator */}
+          {(pendingCount > 0 || syncStatus === 'syncing') && (
+            <button
+              onClick={() => triggerSync()}
+              disabled={syncStatus === 'syncing' || !isOnline}
+              title={
+                !isOnline
+                  ? `${pendingCount} offline change(s) saved locally. Will auto-sync on reconnect.`
+                  : syncStatus === 'syncing'
+                  ? 'Syncing changes...'
+                  : `${pendingCount} pending change(s). Click to sync now.`
+              }
+              className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-semibold bg-indigo-500/10 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/20 transition cursor-pointer"
+            >
+              <RefreshCw className={`w-3 h-3 ${syncStatus === 'syncing' ? 'animate-spin text-indigo-500' : ''}`} />
+              <span className="hidden sm:inline">
+                {syncStatus === 'syncing' ? 'Syncing...' : `${pendingCount} Queued`}
+              </span>
+            </button>
+          )}
 
           {/* PWA Install Button */}
           {isInstallable && !isInstalled && (

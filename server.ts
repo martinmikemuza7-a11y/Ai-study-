@@ -421,6 +421,30 @@ app.get('/downloads/*', (req: Request, res: Response) => {
   });
 });
 
+app.get(['/api/download/source', '/api/download/source-code', '/api/download/project-zip', '/api/download/zip', '/downloads/study-buddy-ai-source.zip'], (req: Request, res: Response) => {
+  let filePath = getDownloadFilePath('study-buddy-ai-source.zip');
+  if (!filePath) {
+    try {
+      const { execSync } = require('child_process');
+      execSync('python3 scripts/package-source.py', { timeout: 20000 });
+      filePath = getDownloadFilePath('study-buddy-ai-source.zip');
+    } catch (err) {
+      console.error('Failed to generate source zip:', err);
+    }
+  }
+
+  if (!filePath) {
+    return res.status(500).json({
+      error: 'Failed to generate project source code archive.',
+      message: 'Please export the project directly from the Google AI Studio menu.',
+    });
+  }
+
+  res.setHeader('Content-Type', 'application/zip');
+  res.setHeader('Content-Disposition', 'attachment; filename="study-buddy-ai-source.zip"');
+  res.download(filePath, 'study-buddy-ai-source.zip');
+});
+
 app.get(['/api/download/android', '/apk', '/android', '/downloads/study-buddy-ai.apk'], (req: Request, res: Response) => {
   const filePath = getDownloadFilePath('study-buddy-ai.apk') || getDownloadFilePath('AI-Study-v2.4.0.apk');
   if (!filePath) {
@@ -440,8 +464,8 @@ app.get(['/api/download/android', '/apk', '/android', '/downloads/study-buddy-ai
   res.download(filePath, 'study-buddy-ai.apk');
 });
 
-app.get(['/api/download/windows', '/windows', '/downloads/study-buddy-ai.exe'], (req: Request, res: Response) => {
-  const filePath = getDownloadFilePath('study-buddy-ai.exe') || getDownloadFilePath('AI-Study-Setup-2.4.0.exe');
+app.get(['/api/download/windows', '/api/download/pc', '/windows', '/pc', '/downloads/study-buddy-ai.exe', '/downloads/AI-Study-Setup-2.4.0.exe', '/downloads/study-buddy-ai-setup.exe'], (req: Request, res: Response) => {
+  const filePath = getDownloadFilePath('study-buddy-ai.exe') || getDownloadFilePath('AI-Study-Setup-2.4.0.exe') || getDownloadFilePath('study-buddy-ai-setup.exe');
   if (!filePath) {
     if (req.accepts('html') && !req.xhr && (req.headers.accept || '').includes('text/html')) {
       return res.redirect('/?notice=windows-binary-pending#downloads');
@@ -455,8 +479,20 @@ app.get(['/api/download/windows', '/windows', '/downloads/study-buddy-ai.exe'], 
     });
   }
   res.setHeader('Content-Type', 'application/vnd.microsoft.portable-executable');
-  res.setHeader('Content-Disposition', 'attachment; filename="study-buddy-ai.exe"');
-  res.download(filePath, 'study-buddy-ai.exe');
+  res.setHeader('Content-Disposition', 'attachment; filename="study-buddy-ai-setup.exe"');
+  res.download(filePath, 'study-buddy-ai-setup.exe');
+});
+
+app.get(['/api/download/windows-portable', '/downloads/study-buddy-ai-windows.zip', '/downloads/AI-Study-Windows-Portable.zip'], (req: Request, res: Response) => {
+  const filePath = getDownloadFilePath('study-buddy-ai-windows.zip') || getDownloadFilePath('AI-Study-Windows-Portable.zip');
+  if (!filePath) {
+    return res.status(404).json({
+      error: 'Windows portable binary is not hosted locally on this server.',
+    });
+  }
+  res.setHeader('Content-Type', 'application/zip');
+  res.setHeader('Content-Disposition', 'attachment; filename="study-buddy-ai-windows.zip"');
+  res.download(filePath, 'study-buddy-ai-windows.zip');
 });
 
 // Fallback 404 for any unregistered /api/* endpoints

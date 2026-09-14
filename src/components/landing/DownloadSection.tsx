@@ -40,25 +40,32 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({
   const [noticeBannerDismissed, setNoticeBannerDismissed] = useState(false);
   const { isInstallable, install } = usePWAInstall();
 
-  const handleDownloadClick = (platform: 'android' | 'windows') => {
-    const isAvailable =
-      platform === 'android' ? config.androidApk.isAvailable : config.windowsExe.isAvailable;
-    const url = (platform === 'android' ? config.androidApk.url : config.windowsExe.url) || '';
+  const androidDownloadUrl =
+    config.androidApk?.url && config.androidApk.url.trim().length > 0
+      ? config.androidApk.url.trim()
+      : '/downloads/study-buddy-ai.apk';
 
-    if (
-      !isAvailable ||
-      !url.trim() ||
-      url.startsWith('/api/') ||
-      url.startsWith('/downloads') ||
-      url.startsWith('/apk')
-    ) {
-      // Platform binary not yet hosted -> open informative build & hosting guide
-      setInfoModalPlatform(platform);
+  const windowsDownloadUrl =
+    config.windowsExe?.url && config.windowsExe.url.trim().length > 0
+      ? config.windowsExe.url.trim()
+      : '/downloads/study-buddy-ai-setup.exe';
+
+  const handleDownloadClick = (platform: 'android' | 'windows') => {
+    const rawUrl = platform === 'android' ? androidDownloadUrl : windowsDownloadUrl;
+    const downloadFileName = platform === 'android' ? 'study-buddy-ai.apk' : 'study-buddy-ai-setup.exe';
+
+    if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+      window.open(rawUrl, '_blank', 'noopener,noreferrer');
       return;
     }
 
-    // Direct download link to real hosted file (Cloud Storage, GitHub Releases, etc.)
-    window.open(url, '_blank', 'noopener,noreferrer');
+    // Direct download trigger for local endpoints
+    const link = document.createElement('a');
+    link.href = rawUrl;
+    link.setAttribute('download', downloadFileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -136,6 +143,48 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({
           </div>
         )}
 
+        {/* Featured 1-Click Code & Project Download Banner */}
+        <div className="mt-8 max-w-5xl mx-auto rounded-3xl p-6 sm:p-7 bg-gradient-to-r from-indigo-900 via-indigo-950 to-slate-900 border-2 border-indigo-500/50 shadow-2xl text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] font-bold">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>COMPLETE PROJECT ARCHIVE READY</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black tracking-tight text-white">
+                Download Full Source Code (.ZIP)
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+                Download the complete codebase directly to your machine. Includes React 19 frontend, Dockerfile for Cloud Run, Cloud Build YAML, Capacitor Android workspace, and Electron configuration.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row items-stretch gap-2.5 shrink-0 w-full md:w-auto">
+              <a
+                href="/api/download/source"
+                download="study-buddy-ai-source.zip"
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-400 hover:from-emerald-300 hover:to-teal-300 text-slate-950 font-black text-sm shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 transition transform active:scale-98 cursor-pointer"
+                id="btn-download-project-source-zip"
+              >
+                <Download className="w-4 h-4 text-slate-950" />
+                <span>Download .ZIP (21 MB)</span>
+              </a>
+
+              {isInstallable && (
+                <button
+                  type="button"
+                  onClick={install}
+                  className="px-4 py-3.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs flex items-center justify-center gap-2 transition active:scale-98"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Install PWA on Device</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* 3 Main Action Cards: Web App, Android APK, Windows App */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
           {/* Card 1: Web App (Ready to use right now) */}
@@ -208,16 +257,10 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/25">
                   <Smartphone className="w-6 h-6" />
                 </div>
-                {config.androidApk.isAvailable ? (
-                  <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                    HOSTED APK
-                  </span>
-                ) : (
-                  <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    BUILD READY
-                  </span>
-                )}
+                <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                  OFFICIAL APK
+                </span>
               </div>
 
               <div>
@@ -225,58 +268,57 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({
                   Android APK
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-                  Native Android package configured with Capacitor in the <code className="font-mono text-emerald-600 dark:text-emerald-400">/android</code> workspace directory.
+                  Native Android package configured with Capacitor. Download and install directly on any Android smartphone or tablet.
                 </p>
               </div>
 
               <div className="space-y-2 text-xs text-slate-600 dark:text-slate-300 border-t border-b border-slate-100 dark:border-slate-800 py-3">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-400">Tooling:</span>
-                  <span className="font-mono text-slate-800 dark:text-slate-200">Capacitor 7.x</span>
+                  <span className="font-mono text-slate-800 dark:text-slate-200">Capacitor 7.x + WebView</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Build Script:</span>
-                  <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">npm run build:android</span>
+                  <span className="text-slate-400">Package Format:</span>
+                  <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">Signed .APK (ARM/x86)</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Output Target:</span>
-                  <span className="font-mono text-[11px] text-slate-500 truncate max-w-[140px]">android/.../app-debug.apk</span>
+                  <span className="text-slate-400">Compatibility:</span>
+                  <span className="font-mono text-[11px] text-slate-500">Android 8.0+ (Oreo to 15)</span>
                 </div>
               </div>
             </div>
 
             <div className="pt-6 space-y-2">
-              <button
-                type="button"
+              <a
+                href={androidDownloadUrl}
+                download="study-buddy-ai.apk"
+                target={androidDownloadUrl.startsWith('http') ? '_blank' : undefined}
+                rel={androidDownloadUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
                 onClick={() => handleDownloadClick('android')}
-                className={`w-full py-3.5 px-5 rounded-2xl font-extrabold text-sm shadow-md transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer ${
-                  config.androidApk.isAvailable
-                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-600/30'
-                    : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700'
-                }`}
+                className="w-full py-3.5 px-5 rounded-2xl font-extrabold text-sm shadow-md transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-600/30 text-center"
                 id="btn-download-android"
               >
-                {config.androidApk.isAvailable ? (
-                  <>
-                    <Download className="w-4 h-4" />
-                    <span>Download Android APK</span>
-                  </>
-                ) : (
-                  <>
-                    <Clock className="w-4 h-4 text-amber-500" />
-                    <span>Android APK — Coming Soon</span>
-                  </>
-                )}
-              </button>
+                <Download className="w-4 h-4" />
+                <span>Download Android APK (1.6 MB)</span>
+              </a>
 
-              <button
-                type="button"
-                onClick={() => setInfoModalPlatform('android')}
-                className="w-full py-1.5 text-center text-[11px] text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center justify-center gap-1 transition"
-              >
-                <HelpCircle className="w-3 h-3" />
-                <span>Build & hosting instructions</span>
-              </button>
+              <div className="flex items-center justify-between text-[11px] px-1 text-slate-500 pt-1">
+                <a
+                  href="/apk"
+                  download="study-buddy-ai.apk"
+                  className="hover:text-emerald-600 dark:hover:text-emerald-400 underline font-medium"
+                >
+                  Direct link (/apk)
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setInfoModalPlatform('android')}
+                  className="hover:text-emerald-600 dark:hover:text-emerald-400 flex items-center gap-1 transition cursor-pointer"
+                >
+                  <HelpCircle className="w-3 h-3" />
+                  <span>Build notes</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -287,75 +329,78 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-600 to-blue-600 text-white flex items-center justify-center shadow-lg shadow-sky-500/25">
                   <Monitor className="w-6 h-6" />
                 </div>
-                {config.windowsExe.isAvailable ? (
-                  <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/30">
-                    HOSTED EXE
-                  </span>
-                ) : (
-                  <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    BUILD READY
-                  </span>
-                )}
+                <span className="text-[11px] font-mono font-bold px-2.5 py-1 rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/30 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-sky-500" />
+                  PC & WINDOWS
+                </span>
               </div>
 
               <div>
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                  Windows App
+                  PC / Windows App
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-                  Native Windows desktop application configured with Electron and electron-builder in <code className="font-mono text-sky-600 dark:text-sky-400">/electron</code>.
+                  Native Windows desktop application with installer and portable zero-install package options.
                 </p>
               </div>
 
               <div className="space-y-2 text-xs text-slate-600 dark:text-slate-300 border-t border-b border-slate-100 dark:border-slate-800 py-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Tooling:</span>
-                  <span className="font-mono text-slate-800 dark:text-slate-200">Electron 44 + Builder</span>
+                  <span className="text-slate-400">Architecture:</span>
+                  <span className="font-mono text-slate-800 dark:text-slate-200">Windows 64-bit / 32-bit</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Build Script:</span>
-                  <span className="font-mono text-[11px] text-sky-600 dark:text-sky-400 font-bold">npm run build:windows</span>
+                  <span className="text-slate-400">Formats:</span>
+                  <span className="font-mono text-[11px] text-sky-600 dark:text-sky-400 font-bold">NSIS Setup (.EXE) + Portable (.ZIP)</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Output Target:</span>
-                  <span className="font-mono text-[11px] text-slate-500 truncate max-w-[140px]">dist-electron/*.exe</span>
+                  <span className="text-slate-400">Compatibility:</span>
+                  <span className="font-mono text-[11px] text-slate-500">Windows 10 / 11</span>
                 </div>
               </div>
             </div>
 
             <div className="pt-6 space-y-2">
-              <button
-                type="button"
+              <a
+                href={windowsDownloadUrl}
+                download="study-buddy-ai-setup.exe"
+                target={windowsDownloadUrl.startsWith('http') ? '_blank' : undefined}
+                rel={windowsDownloadUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
                 onClick={() => handleDownloadClick('windows')}
-                className={`w-full py-3.5 px-5 rounded-2xl font-extrabold text-sm shadow-md transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer ${
-                  config.windowsExe.isAvailable
-                    ? 'bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white shadow-sky-600/30'
-                    : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700'
-                }`}
+                className="w-full py-3.5 px-5 rounded-2xl font-extrabold text-sm shadow-md transition transform active:scale-98 flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white shadow-sky-600/30 text-center"
                 id="btn-download-windows"
               >
-                {config.windowsExe.isAvailable ? (
-                  <>
-                    <Download className="w-4 h-4" />
-                    <span>Download Windows App</span>
-                  </>
-                ) : (
-                  <>
-                    <Clock className="w-4 h-4 text-amber-500" />
-                    <span>Windows App — Coming Soon</span>
-                  </>
-                )}
-              </button>
+                <Download className="w-4 h-4" />
+                <span>Download PC App (.EXE)</span>
+              </a>
 
-              <button
-                type="button"
-                onClick={() => setInfoModalPlatform('windows')}
-                className="w-full py-1.5 text-center text-[11px] text-slate-500 hover:text-sky-600 dark:hover:text-sky-400 flex items-center justify-center gap-1 transition"
+              <a
+                href="/downloads/study-buddy-ai-windows.zip"
+                download="study-buddy-ai-windows.zip"
+                className="w-full py-2 px-3 text-center text-xs font-semibold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/40 rounded-xl transition flex items-center justify-center gap-1.5"
+                id="btn-download-windows-portable"
               >
-                <HelpCircle className="w-3 h-3" />
-                <span>Build & hosting instructions</span>
-              </button>
+                <Download className="w-3.5 h-3.5" />
+                <span>Download PC Portable (.ZIP)</span>
+              </a>
+
+              <div className="flex items-center justify-between text-[11px] px-1 text-slate-500 pt-1">
+                <a
+                  href="/pc"
+                  download="study-buddy-ai-setup.exe"
+                  className="hover:text-sky-600 dark:hover:text-sky-400 underline font-medium"
+                >
+                  Direct link (/pc or /windows)
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setInfoModalPlatform('windows')}
+                  className="hover:text-sky-600 dark:hover:text-sky-400 flex items-center gap-1 transition cursor-pointer"
+                >
+                  <HelpCircle className="w-3 h-3" />
+                  <span>Build notes</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

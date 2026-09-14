@@ -113,7 +113,7 @@ export const ConfigUrlsModal: React.FC<ConfigUrlsModalProps> = ({ isOpen, onClos
                 type="text"
                 value={apkUrl}
                 onChange={(e) => setApkUrl(e.target.value)}
-                placeholder="e.g. https://storage.googleapis.com/my-bucket/app.apk (leave empty for Coming Soon)"
+                placeholder="e.g. https://storage.googleapis.com/my-bucket/app.apk (leave empty for local server download)"
                 className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono"
               />
             </div>
@@ -161,7 +161,7 @@ export const ConfigUrlsModal: React.FC<ConfigUrlsModalProps> = ({ isOpen, onClos
                 type="text"
                 value={exeUrl}
                 onChange={(e) => setExeUrl(e.target.value)}
-                placeholder="e.g. https://storage.googleapis.com/my-bucket/setup.exe (leave empty for Coming Soon)"
+                placeholder="e.g. https://storage.googleapis.com/my-bucket/setup.exe (leave empty for local server download)"
                 className="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 font-mono"
               />
             </div>

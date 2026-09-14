@@ -236,3 +236,23 @@ export interface RAGSearchResult {
   score: number; // 0 to 1
   matchedKeywords: string[];
 }
+
+export type SyncStatus = 'idle' | 'syncing' | 'synced' | 'failed';
+
+export interface SyncQueueItem {
+  id: string;
+  entityType: 'course' | 'document' | 'quiz_attempt' | 'tutor_history' | 'calendar_event' | 'settings';
+  action: 'create' | 'update' | 'delete';
+  entityId: string;
+  payload: any;
+  timestamp: number;
+  retryCount: number;
+  status: 'pending' | 'syncing' | 'synced' | 'failed';
+  error?: string;
+}
+
+export interface AppSettingItem {
+  key: string;
+  value: any;
+  updatedAt: string;
+}
